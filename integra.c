@@ -3,17 +3,16 @@
 #include <math.h>
 #include <mpi.h>
 
-double fun(double x);
+double fun(double x1,double x2,double x3,double x4,double x5,double x6,double x7,double x8,double x9,double x10);
 double integral_montecarlo(double *x, int _n);
 int main(int argc, char **argv)
 {
 	int n,rank,size,len;
-	int N, i, n_puntos;
-	double x, integral,integralsub;
+	int N, i, n_puntos,b,a;
+	double x1,x2,x3,x4,x5,x6,x7,x8,x9,x10, integral,integralsub;
 	double *f;
-	double INTEGRAL_VALOR=0.5;
 	char name[80];
-
+	
 	double start_time, end_time,computation_time;
 	N = atoi(argv[1]);
 	n_puntos=N;
@@ -23,7 +22,8 @@ int main(int argc, char **argv)
 
 	MPI_Get_processor_name(name,&len);
 
-
+	b=1;
+	a=0;
 
 		if (rank==0)
 		{
@@ -34,7 +34,18 @@ int main(int argc, char **argv)
 	  
 		for(i=0; i<n_puntos; i++)
 		{
-			f[i] = fun(drand48());
+			x1=drand48()*(b-a)+a;
+			x2=drand48()*(b-a)+a;
+			x3=drand48()*(b-a)+a;
+			x4=drand48()*(b-a)+a;
+			x5=drand48()*(b-a)+a;
+			x6=drand48()*(b-a)+a;
+			x7=drand48()*(b-a)+a;
+			x8=drand48()*(b-a)+a;
+			x9=drand48()*(b-a)+a;
+			x10=drand48()*(b-a)+a;
+			
+			f[i] = fun(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10);
 		}
 
 		integralsub = integral_montecarlo(f, n_puntos);
@@ -45,12 +56,11 @@ int main(int argc, char **argv)
 
 		if (rank == 0)
 		{
-			printf("La integral es %.16f con error de %.16f\n", integral,(INTEGRAL_VALOR-integral));
+			printf("La integral es %.16f con error de %.16f\n", integral,fabs(integral-(155.0/6.0)));
 			end_time = MPI_Wtime();
 			computation_time = end_time - start_time;		
 			printf("El tiempo para calcular la integral es: %f\n", computation_time);
 		}
-
 
 
 	MPI_Finalize();
@@ -72,7 +82,7 @@ double integral_montecarlo(double *x, int _n)
 	return a;
 }
 
-double fun(double x)
+double fun(double x1,double x2,double x3,double x4,double x5,double x6,double x7,double x8,double x9,double x10)
 {
-	return (x);
+	return (x1+x2+x3+x5+x6+x7+x8+x9+x10)*(x1+x2+x3+x5+x6+x7+x8+x9+x10);
 }

@@ -1,4 +1,6 @@
-make
 
-module load rocks-openmpi_ib
-mpirun_rsh -np -hostfile hosts ./pi
+mpicc -o integra integra.c
+mpicc -o pi pi.c
+
+mpiexec -np 16 ./pi
+mpiexec -np 16 ./integra 1000
