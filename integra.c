@@ -13,6 +13,7 @@ int main(int argc, char **argv)
 	double *f;
 	char name[80];
 	
+
 	double start_time, end_time,computation_time;
 	N = atoi(argv[1]);
 	n_puntos=N;
@@ -54,6 +55,10 @@ int main(int argc, char **argv)
 			integralsub = integral_montecarlo(f, n_puntos)/size;
 
 		}
+		if(size==0)
+		{
+			integralsub = integral_montecarlo(f, n_puntos);
+		}
 
 		fprintf(stdout, "La integral es : %f del rank: %d en %s\n", integralsub,rank, name);
 
@@ -66,6 +71,13 @@ int main(int argc, char **argv)
 			computation_time = end_time - start_time;		
 			printf("El tiempo para calcular la integral es: %f\n", computation_time);
 		}
+
+
+	char buffer[80];
+	sprintf(buffer, "integralN%d.txt",N);
+	FILE *file = fopen(buffer, "wb");
+	fprintf(file, "%f", integral);
+	fclose(file);
 
 
 	MPI_Finalize();
@@ -83,11 +95,11 @@ double integral_montecarlo(double *x, int _n)
 	{
 		a += x[i];
 	}
-	a = a/_n;
+	a = a/(_n-1);
 	return a;
 }
 
 double fun(double x1,double x2,double x3,double x4,double x5,double x6,double x7,double x8,double x9,double x10)
 {
-	return (x1+x2+x3+x5+x6+x7+x8+x9+x10)*(x1+x2+x3+x5+x6+x7+x8+x9+x10);
+	return (x1+x2+x3+x4+x5+x6+x7+x8+x9+x10)*(x1+x2+x3+x4+x5+x6+x7+x8+x9+x10);
 }
