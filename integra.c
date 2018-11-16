@@ -3,10 +3,8 @@
 #include <math.h>
 #include <mpi.h>
 
-double average(double *x, int _n);
-double average_sq(double *x, int _n);
 double fun(double x);
-
+double integral_montecarlo(double *x, int _n);
 int main(int argc, char **argv)
 {
 	int n,rank,size,len;
@@ -26,30 +24,20 @@ int main(int argc, char **argv)
 	MPI_Get_processor_name(name,&len);
 
 
-  	while(1)
-	{
 
 		if (rank==0)
 		{
 			start_time=MPI_Wtime();
 		}
 
-		MPI_Bcast(&n,1,MPI_INT,0,MPI_COMM_WORLD);
-		if (n==0) break;
-
-		if(!(f = malloc(N*sizeof(double))))
-		{
-			fprintf(stderr, "problem with f allocation\n");
-			exit(1);    
-		}
+		f = malloc(n_puntos*sizeof(double));
 	  
 		for(i=0; i<n_puntos; i++)
 		{
-			x = drand48();
-			f[i] = fun(x);
+			f[i] = fun(drand48());
 		}
 
-		integralsub = average(f, n_puntos);
+		integralsub = integral_montecarlo(f, n_puntos);
 
 		fprintf(stdout, "La integral es : %f del rank: %d en %s\n", integralsub,rank, name);
 
@@ -57,14 +45,13 @@ int main(int argc, char **argv)
 
 		if (rank == 0)
 		{
-			printf("La integral es %.16f con error de %.16f", integral,INTEGRAL_VALOR);
+			printf("La integral es %.16f con error de %.16f\n", integral,(INTEGRAL_VALOR-integral));
 			end_time = MPI_Wtime();
 			computation_time = end_time - start_time;		
-			printf("Time of calculating pi is: %f\n", computation_time);
+			printf("El tiempo para calcular la integral es: %f\n", computation_time);
 		}
 
 
-	}
 
 	MPI_Finalize();
 
@@ -72,7 +59,8 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-double average(double *x, int _n){
+double integral_montecarlo(double *x, int _n)
+{
 	int i;
 	double a;
 	a = 0.0;
@@ -80,19 +68,7 @@ double average(double *x, int _n){
 	{
 		a += x[i];
 	}
-	a /= _n;
-	return a;
-}
-
-double average_sq(double *x, int _n){
-	int i;
-	double a;
-	a = 0.0;
-	for(i=0;i<_n;i++)
-	{
-		a += x[i]*x[i];
-	}
-	a /= _n;
+	a = a/_n;
 	return a;
 }
 
