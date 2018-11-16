@@ -49,6 +49,7 @@ int main (int argc, char *argv[])
 			computation_time = end_time - start_time;		
 			printf("Time of calculating pi is: %f\n", computation_time);
 		}
+
 	}
 	MPI_Finalize();
 	return 0;	
