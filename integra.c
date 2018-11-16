@@ -21,6 +21,7 @@ int main(int argc, char **argv)
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 
 	MPI_Get_processor_name(name,&len);
+	
 
 	b=1;
 	a=0;
@@ -48,7 +49,11 @@ int main(int argc, char **argv)
 			f[i] = fun(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10);
 		}
 
-		integralsub = integral_montecarlo(f, n_puntos);
+		if(size!=0)
+		{
+			integralsub = integral_montecarlo(f, n_puntos)/size;
+
+		}
 
 		fprintf(stdout, "La integral es : %f del rank: %d en %s\n", integralsub,rank, name);
 
